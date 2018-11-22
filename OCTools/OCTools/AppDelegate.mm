@@ -12,7 +12,8 @@
 #import "Item2ViewController.h"
 #import "GuidePageViewController.h"
 #import "AdViewController.h"
-@interface AppDelegate ()<BMKGeneralDelegate>
+#import "AvoidCrash.h"
+@interface AppDelegate ()<BMKGeneralDelegate,UIAlertViewDelegate>
 
 @end
 
@@ -47,6 +48,13 @@
     };
     self.window.rootViewController = vc;
    */
+    
+    //防止崩溃功能
+    [AvoidCrash makeAllEffective];
+    
+    //监听通知:AvoidCrashNotification, 获取AvoidCrash捕获的崩溃日志的详细信息
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dealwithCrashMessage:) name:AvoidCrashNotification object:nil];
+    
     //设置广告启动图
     AdViewController *vc = [[AdViewController alloc]init];
     vc.url = @"http://img.zcool.cn/community/01316b5854df84a8012060c8033d89.gif";
@@ -93,6 +101,31 @@
     return YES;
 }
 
+#pragma mark 异常捕捉
+
+- (void)dealwithCrashMessage:(NSNotification *)note {
+    //不论在哪个线程中导致的crash，这里都是在主线程
+    
+    //注意:所有的信息都在userInfo中
+    //你可以在这里收集相应的崩溃信息进行相应的处理(比如传到自己服务器)
+    //详细讲解请查看 https://github.com/chenfanfang/AvoidCrash
+    
+    UIAlertView *alter = [[UIAlertView alloc]initWithTitle:@"提示" message:@"程序出现异常，给你带来的不便，尽请谅解，我们将尽快修复。" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    
+    [alter show];
+    
+    //异常拦截并且通过bugly上报
+    //    NSDictionary *info = note.userInfo;
+    //    NSString *errorReason = [NSString stringWithFormat:@"【ErrorReason】%@========【ErrorPlace】%@========【DefaultToDo】%@========【ErrorName】%@", info[@"errorReason"], info[@"errorPlace"], info[@"defaultToDo"], info[@"errorName"]];
+    //    NSArray *callStack = info[@"callStackSymbols"];
+    //
+    //    [Bugly reportErrorName:Bugly_ErrorName_AvoidCrash errorReason:errorReason callStack:callStack extraInfo:nil];
+    
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    exit(0);
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

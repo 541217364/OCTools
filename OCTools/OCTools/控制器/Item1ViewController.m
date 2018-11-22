@@ -34,6 +34,8 @@
     self.tab.EventDelegate = self;
     self.tab.isNoData = YES;
     [self.view addSubview:self.tab];
+    
+    NSLog(@"%@",[self.data objectAtIndex:20]);
 }
 #pragma mark - EventDelegate
 - (void)refresh:(BaseTableView *)tableView {
