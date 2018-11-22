@@ -91,7 +91,6 @@
 //添加计时器
 - (void)addTimer {
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timeOut) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     self.timer = timer;
 }
 //设置超时
@@ -100,6 +99,7 @@
     if (self.second > 0) {
         [self.skipButton setTitle:[NSString stringWithFormat:@"%zd 跳过", self.second] forState:UIControlStateNormal];
     } else {
+        [self removeTimer];
         [self skipButtonClick];
     }
 }
@@ -110,13 +110,17 @@
 }
 //点击广告
 - (void)adViewClick {
+    [self removeTimer];
     self.adDidClickBlock();
 }
 //跳过按钮
 - (void)skipButtonClick{
+    [self removeTimer];
     self.skipDidClickBlock();
 }
-
+- (void)dealloc {
+    [self removeTimer];
+}
 /*
 #pragma mark - Navigation
 

@@ -47,6 +47,10 @@
 #import "UIImage+Extension.h"
 #import "UIColor+Extension.h"
 #import "UIView+Extension.h"
+#import "NSObject+Extension.h"
+#import "UITableView+Extension.h"
+
+
 #import "JSONModel.h"
 #import "Singleton.h"
 #import "UserInfo.h"
